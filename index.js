@@ -166,13 +166,15 @@ function resumePdfToJson(cb) {
 
         var firstName = dataHeader.head[0].split(' ')[0];
 
+        // this will result in removing the experience section that is identical to the headers
+        // it can lead to an error in parsing cv
         // clean out the extra headers
-        for (var x = 0; x < chunks.length; x++) {
-            cut = dataHeader.head.indexOf(chunks[x]);
-            if ( cut > -1 ) {
-                chunks.splice(x, 1);
-            }
-        }
+        //for (var x = 0; x < chunks.length; x++) {
+        //    cut = dataHeader.head.indexOf(chunks[x]);
+        //    if ( cut > -1 ) {
+        //        chunks.splice(x, 1);
+        //    }
+        //}
 
         // clean out the page numbers
         for (var y = 0; y < chunks.length; y++) {
