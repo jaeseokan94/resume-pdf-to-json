@@ -314,7 +314,7 @@ function resumePdfToJson(cb) {
 
                 // if the time variable fits the time format,
                 // create a new section and set the headline vars.
-                // if (h3 && service.isTime(h3)) {
+                 if (h3 && service.isTime(h3)) {
                 // if (s === 0 || nuw) {
                 if (service.isDateRange(h2)) {
                     head = [h1, h2];
@@ -332,7 +332,7 @@ function resumePdfToJson(cb) {
                     t = data[is].sections[cnt].text;
                     data[is].sections[cnt].text = (t + ' ' + line).trim();
                 }
-
+              }
             }
 
         }
