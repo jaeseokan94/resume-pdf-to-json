@@ -56,4 +56,4 @@ There are multiple sections of the LinkedIn PDF resume output, however, not all 
 - [number] people have recommended [name]
 
 Support for additional sections may be added in the future.
-
+!
