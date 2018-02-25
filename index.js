@@ -44,7 +44,9 @@ var settings = {
         ['  -  ', ' - '],
         ['  at   ', ' at '],
         ['  ', ' '],
-        [' , ', ', ']
+        [' , ', ', '],
+        ['  ',' '],
+        [' -  ',' - ']
     ]
 };
 
@@ -329,10 +331,12 @@ function resumePdfToJson(cb) {
                 // the headline vars, add line to the section text.
                 } else if(service.isPageNum(h2)){
                     i = i + 2 ;
-                }  else if (line && !service.isPageNum(line) && head.indexOf(line) === -1) {
-                    // concantentate section text
-                    t = data[is].sections[cnt].text;
-                    data[is].sections[cnt].text = (t + ' ' + line).trim();
+                } else if (!head && !line){ 
+                    if (line && !service.isPageNum(line) && head.indexOf(line) === -1) {
+                        // concantentate section text
+                        t = data[is].sections[cnt].text;
+                        data[is].sections[cnt].text = (t + ' ' + line).trim();
+                    }
                 }
               //}
             }
