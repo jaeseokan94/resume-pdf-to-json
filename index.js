@@ -334,8 +334,9 @@ function resumePdfToJson(cb) {
                 } else if (line && !service.isPageNum(line) && head.indexOf(line) === -1) {
                         // concantentate section text
                         t = data[is].sections[cnt].text;
-                        data[is].sections[cnt].text = (t + ' ' + line).trim();
-                    }
+                        data[is].sections[cnt].text = (t + line).trim()+'\n';
+
+                }
 
               //}
             }
