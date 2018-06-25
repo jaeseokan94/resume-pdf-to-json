@@ -1,5 +1,3 @@
-
-
 'use strict';
 
 
@@ -10,10 +8,16 @@
 var Promise = require('promise'),
     extend = require('extend'),
     pdfText = require('pdf-text');
-    // jsonfile = require('jsonfile');
-    // If user wishes to out put json, will be imported
-    // in p(); documented here for reference.
+// jsonfile = require('jsonfile');
+// If user wishes to out put json, will be imported
+// in p(); documented here for reference.
 
+
+/*
+    Regex for matching leading character
+ */
+
+var isLeadingCharBullet = new RegExp('\\●\\-\\◈');
 
 /**
  * Settings
@@ -45,8 +49,8 @@ var settings = {
         ['  at   ', ' at '],
         ['  ', ' '],
         [' , ', ', '],
-        ['  ',' '],
-        [' -  ',' - ']
+        ['  ', ' '],
+        [' -  ', ' - ']
     ]
 };
 
@@ -108,9 +112,11 @@ function resumePdfToJson(cb) {
         }
         // Look for recommendations
         for (var ch = chunks.length - 1; ch >= 0; ch--) {
-            if ( service.isRecommendation(chunks[ch]) ) headers.push(ch);
+            if (service.isRecommendation(chunks[ch])) headers.push(ch);
         }
-        headers.sort(function(a, b){return a - b;});
+        headers.sort(function (a, b) {
+            return a - b;
+        });
         for (var i = headers.length - 1; i >= 0; i--) {
             h = headers[i];
             headers[i] = chunks[h];
@@ -132,7 +138,7 @@ function resumePdfToJson(cb) {
         var r;
         for (var i = 0; i < settings.replace.length; i++) {
             r = settings.replace[i];
-            line = line.replace(r[0] , r[1]);
+            line = line.replace(r[0], r[1]);
         }
         return line;
     }
@@ -230,34 +236,34 @@ function resumePdfToJson(cb) {
             if (subsection && !h && !r) {
                 if (!subsections[cnt]) subsections[cnt] = {'head': [header], 'text': []};
                 subsections[cnt].text.push(line);
-            // if the section is a list section, just add
-            // to the text as a list.
+                // if the section is a list section, just add
+                // to the text as a list.
             } else if (listsection && !h && !r) {
                 data[cnt].text.push(line);
-            // if this section is a one line section and
-            // it is not a header save it in a different
-            // array for parsing.
+                // if this section is a one line section and
+                // it is not a header save it in a different
+                // array for parsing.
             } else if (onelinesection && !h && !r) {
                 if (!onelinesections[cnt]) onelinesections[cnt] = {'head': [header], 'text': []};
                 onelinesections[cnt].text.push(line);
 
-            // if this section is a recommendation, not a header,
-            // and not a recommendation header, parse it for the
-            // recommendation section
+                // if this section is a recommendation, not a header,
+                // and not a recommendation header, parse it for the
+                // recommendation section
             } else if (recommendation && !h && !r) {
 
                 // if it's a new recommendation, create a new section
                 if (line[0] === '"') {
-                    data[cnt].sections.push({'text':[line]});
-                // else just add line to the last recomendation in the list.
+                    data[cnt].sections.push({'text': [line]});
+                    // else just add line to the last recomendation in the list.
                 } else {
                     ti = data[cnt].sections.length - 1;
                     t = data[cnt].sections[ti].text;
                     data[cnt].sections[ti].text = (t + ' ' + line).trim();
                 }
-            // save the line in this section's text array
-            // if the line isn't a page number, and the length
-            // is greater than the base paragraph line length.
+                // save the line in this section's text array
+                // if the line isn't a page number, and the length
+                // is greater than the base paragraph line length.
             } else if (data[cnt] && !service.isPageNum(line) && !h && !r) {
                 // concantenate the text.
                 t = data[cnt].text;
@@ -326,19 +332,24 @@ function resumePdfToJson(cb) {
                         'head': head,
                         'text': ''
                     });
-                // if the time isn't time, and the line isn't
-                // a page number, and the line isn't one of
-                // the headline vars, add line to the section text.
-                } else if(service.isPageNum(h2)){
-                    i = i + 2 ;
+                    // if the time isn't time, and the line isn't
+                    // a page number, and the line isn't one of
+                    // the headline vars, add line to the section text.
+                } else if (service.isPageNum(h2)) {
+                    i = i + 2;
                 } else if (line && !service.isPageNum(line) && head.indexOf(line) === -1) {
-                        // concantentate section text
-                        t = data[is].sections[cnt].text;
-                        data[is].sections[cnt].text = (t + line).trim()+'\n';
+                    // concantentate section text
+                    t = data[is].sections[cnt].text;
+                    var leadingChar = line.charAt(0);
+                    // if line starts with - . ●, ◈
+                    if (leadingChar.match(isLeadingCharBullet)) {
+                        line = '\n' + line;
+                    }
+                    data[is].sections[cnt].text = (t + line).trim();
 
                 }
 
-              //}
+                //}
             }
 
         }
@@ -360,7 +371,7 @@ function resumePdfToJson(cb) {
             }
             // go through the groups and add them as sections.
             for (var g = 0; g < groups.length; g++) {
-                head = [ groups[g][0] ];
+                head = [groups[g][0]];
                 text = groups[g][1];
                 // if they aren't page numbers and they are groups
                 // of two, create sections for them.
@@ -381,7 +392,7 @@ function resumePdfToJson(cb) {
     }
 
 
-    pdfText(settings.path, function(err, chunks) {
+    pdfText(settings.path, function (err, chunks) {
 
         if (err) {
 
@@ -410,7 +421,7 @@ function resumePdfToJson(cb) {
 
 function p(resolve, reject) {
 
-    resumePdfToJson(function(err, data) {
+    resumePdfToJson(function (err, data) {
 
         if (err) {
 
@@ -432,7 +443,7 @@ function p(resolve, reject) {
 }
 
 
-module.exports = function(path, config) {
+module.exports = function (path, config) {
 
     settings = extend(true, {}, config, settings);
 
