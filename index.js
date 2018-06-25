@@ -17,7 +17,7 @@ var Promise = require('promise'),
     Regex for matching leading character
  */
 
-var isLeadingCharBullet = new RegExp('\\●\\-\\◈');
+var isLeadingCharBullet = new RegExp('[\\●\\-\\◈]');
 
 /**
  * Settings
