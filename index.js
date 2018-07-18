@@ -213,7 +213,9 @@ function resumePdfToJson(cb) {
                 header = line;
 
                 next = service.headers[service.index(header) + 1];
-
+                if(!next){ // to handle the case where next is null.
+                    next = 'placeholder'
+                }
                 // if the headline is a recomendation, get the amount of
                 // people recommended and set next to false.
                 if (service.isRecommendation(line)) {
